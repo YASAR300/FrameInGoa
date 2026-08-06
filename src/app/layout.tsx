@@ -34,9 +34,9 @@ export const metadata: Metadata = {
     "FrameInGoa",
   ],
   icons: {
-    icon: "/assets/frameingoa-logo.png",
-    shortcut: "/assets/frameingoa-logo.png",
-    apple: "/assets/frameingoa-logo.png",
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
   openGraph: {
     title: "FrameInGoa — Hacker House Goa 2026",
