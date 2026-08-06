@@ -22,7 +22,7 @@ const config: Config = {
         "goa-black": "#000000",
       },
       fontFamily: {
-        serif: ["var(--font-cormorant)", "Georgia", "serif"],
+        serif: ["var(--font-playfair)", "Georgia", "serif"],
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
       },
       borderRadius: {

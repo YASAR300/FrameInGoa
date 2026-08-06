@@ -1,237 +1,402 @@
 "use client";
 
+import Image from "next/image";
+import { motion } from "framer-motion";
 import PhotoUploadZone from "@/components/PhotoUploadZone";
 
-// ─── Inline SVG Illustrations ─────────────────────────────────────────────────
-
-function PalmTreeLeft() {
+/* ─── Inline SVG: Palm Tree ─────────────────────────────────────────────── */
+function PalmTree({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 120 220"
+      viewBox="0 0 160 300"
       fill="none"
-      className="w-full h-full"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
       aria-hidden="true"
     >
-      {/* Trunk */}
-      <path
-        d="M60 220 C58 190, 55 160, 62 130 C68 100, 65 80, 60 60"
-        stroke="#05552F"
-        strokeWidth="8"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <path
-        d="M60 220 C62 190, 65 160, 58 130 C52 100, 55 80, 60 60"
-        stroke="#086B3C"
-        strokeWidth="5"
-        strokeLinecap="round"
-        fill="none"
-      />
-      {/* Fronds */}
-      <path d="M60 60 C40 40, 10 45, 5 20" stroke="#086B3C" strokeWidth="4" strokeLinecap="round" fill="none"/>
-      <path d="M60 60 C80 38, 110 40, 115 15" stroke="#086B3C" strokeWidth="4" strokeLinecap="round" fill="none"/>
-      <path d="M60 60 C35 55, 8 65, 2 50" stroke="#05552F" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
-      <path d="M60 60 C85 55, 112 68, 118 52" stroke="#05552F" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
-      <path d="M60 60 C55 38, 45 15, 30 8" stroke="#086B3C" strokeWidth="3" strokeLinecap="round" fill="none"/>
-      <path d="M60 60 C65 38, 78 16, 92 10" stroke="#086B3C" strokeWidth="3" strokeLinecap="round" fill="none"/>
-      {/* Coconuts */}
-      <circle cx="62" cy="68" r="5" fill="#FFD600" opacity="0.8"/>
-      <circle cx="56" cy="74" r="4" fill="#FFD600" opacity="0.7"/>
+      <path d="M80 300 C78 260 74 220 72 180 C70 150 68 115 72 85" stroke="#3d7a4e" strokeWidth="12" strokeLinecap="round" fill="none" />
+      <path d="M84 300 C86 260 90 220 92 180 C94 150 96 115 92 85" stroke="#2d5e3a" strokeWidth="7" strokeLinecap="round" fill="none" />
+      <path d="M74 240 Q82 237 90 240" stroke="#2a5235" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M73 210 Q82 207 91 210" stroke="#2a5235" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M72 180 Q82 177 92 180" stroke="#2a5235" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M71 155 Q82 152 93 155" stroke="#2a5235" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M71 130 Q82 127 93 130" stroke="#2a5235" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M72 108 Q82 105 92 108" stroke="#2a5235" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M82 88 C95 70 130 45 155 20" stroke="#1d6e35" strokeWidth="3" strokeLinecap="round" fill="none"/>
+      <path d="M82 88 C100 72 132 50 155 20 C135 55 105 75 82 88Z" fill="#1a6030" />
+      <path d="M80 88 C65 70 30 45 5 20" stroke="#228b3b" strokeWidth="3" strokeLinecap="round" fill="none"/>
+      <path d="M80 88 C62 72 28 50 5 20 C25 55 55 75 80 88Z" fill="#228b3b" />
+      <path d="M84 92 C110 90 140 105 150 130" stroke="#1d6e35" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+      <path d="M84 92 C112 92 142 108 150 130 C130 108 108 95 84 92Z" fill="#196030" />
+      <path d="M78 92 C52 90 22 105 12 130" stroke="#228b3b" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+      <path d="M78 92 C50 92 20 108 12 130 C32 108 52 95 78 92Z" fill="#228b3b" />
+      <path d="M86 98 C115 108 138 135 132 158" stroke="#196030" strokeWidth="2" strokeLinecap="round" fill="none"/>
+      <path d="M86 98 C116 110 140 138 132 158 C116 136 108 112 86 98Z" fill="#155228" />
+      <path d="M76 98 C47 108 24 135 30 158" stroke="#228b3b" strokeWidth="2" strokeLinecap="round" fill="none"/>
+      <path d="M76 98 C46 110 22 138 30 158 C46 136 54 112 76 98Z" fill="#1d6e35" />
+      <circle cx="83" cy="92" r="7" fill="#b87a2a" />
+      <circle cx="76" cy="96" r="6" fill="#c4882a" />
+      <circle cx="90" cy="97" r="6" fill="#b87a2a" />
     </svg>
   );
 }
 
-// Pre-computed sun ray endpoints to avoid SSR/hydration mismatch
-// Each entry: [x1, y1, x2, y2] for angles 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330
-const SUN_RAYS: [number, number, number, number][] = [
-  [82, 50, 94, 50],
-  [77.71, 66, 87.42, 72],
-  [66, 77.71, 72, 87.42],
-  [50, 82, 50, 94],
-  [34, 77.71, 28, 87.42],
-  [22.29, 66, 12.58, 72],
-  [18, 50, 6, 50],
-  [22.29, 34, 12.58, 28],
-  [34, 22.29, 28, 12.58],
-  [50, 18, 50, 6],
-  [66, 22.29, 72, 12.58],
-  [77.71, 34, 87.42, 28],
-];
-
-function SunIllustration() {
+/* ─── Inline SVG: Sun ───────────────────────────────────────────────────── */
+function Sun({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 100 100" fill="none" className="w-full h-full" aria-hidden="true">
-      <circle cx="50" cy="50" r="28" fill="#FFD600"/>
-      {SUN_RAYS.map(([x1, y1, x2, y2], i) => (
-        <line
-          key={i}
-          x1={x1} y1={y1} x2={x2} y2={y2}
-          stroke="#FFD600"
-          strokeWidth={i % 2 === 0 ? "3" : "2"}
-          strokeLinecap="round"
-        />
-      ))}
-      <circle cx="50" cy="50" r="22" fill="#FFD600" opacity="0.6"/>
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden="true">
+      <circle cx="50" cy="50" r="22" fill="#FFD600" />
+      {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((angle, i) => {
+        const rad = (angle * Math.PI) / 180;
+        const x1 = 50 + 26 * Math.cos(rad);
+        const y1 = 50 + 26 * Math.sin(rad);
+        const len = i % 2 === 0 ? 16 : 10;
+        const x2 = 50 + (26 + len) * Math.cos(rad);
+        const y2 = 50 + (26 + len) * Math.sin(rad);
+        return (
+          <line
+            key={angle}
+            x1={x1.toFixed(2)}
+            y1={y1.toFixed(2)}
+            x2={x2.toFixed(2)}
+            y2={y2.toFixed(2)}
+            stroke="#FFD600"
+            strokeWidth={i % 2 === 0 ? "3.5" : "2.5"}
+            strokeLinecap="round"
+          />
+        );
+      })}
+      <circle cx="44" cy="47" r="2.5" fill="#086B3C" />
+      <circle cx="56" cy="47" r="2.5" fill="#086B3C" />
+      <path d="M44 55 Q50 60 56 55" stroke="#086B3C" strokeWidth="2" strokeLinecap="round" fill="none" />
     </svg>
   );
 }
 
-function StarSparkle({ className }: { className?: string }) {
+/* ─── Sparkle ───────────────────────────────────────────────────────────── */
+function Sparkle({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path
-        d="M12 2 L13.5 9 L20 10 L13.5 11.5 L12 18 L10.5 11.5 L4 10 L10.5 9 Z"
-        fill="currentColor"
-      />
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
+      <path d="M10 1 L11.2 8 L18 10 L11.2 12 L10 19 L8.8 12 L2 10 L8.8 8 Z" fill="currentColor" />
     </svg>
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// Cubic bezier ease for physics-based smooth motion
+const easeOutCubic = [0.25, 0.1, 0.25, 1.0];
+const easeBounce = [0.34, 1.35, 0.64, 1];
 
 export default function Home() {
   function handleFileSelected(file: File, dataUrl: string) {
-    // Phase 2: navigation to the form will go here
-    console.log("File selected:", file.name, "size:", file.size, "preview ready");
-    void dataUrl; // used by the preview in the component itself
+    console.log("File selected:", file.name);
+    void dataUrl;
   }
 
   return (
-    <main className="min-h-screen bg-goa-dark-green overflow-x-hidden">
+    <main className="min-h-screen bg-goa-dark-green overflow-x-hidden flex flex-col selection:bg-goa-yellow selection:text-goa-dark-green">
 
-      {/* ── Decorative top band ──────────────────────────────────────────── */}
-      <div className="h-1.5 w-full bg-goa-yellow" aria-hidden="true" />
+      {/* ── Yellow accent top band ─────────────────────────────────────── */}
+      <div className="h-1.5 w-full bg-goa-yellow shrink-0" />
 
-      {/* ── Header / Nav ─────────────────────────────────────────────────── */}
-      <header className="flex items-center justify-between px-5 sm:px-8 py-5 max-w-5xl mx-auto">
-        {/* Logo lockup */}
-        <div className="flex flex-col leading-none">
-          <span
-            className="font-serif text-goa-yellow tracking-tight"
-            style={{ fontSize: "clamp(1.6rem, 4vw, 2.4rem)", fontWeight: 700 }}
-          >
-            HACKER HOUSE
-          </span>
-          <span className="font-sans text-goa-cream/70 text-xs tracking-[0.25em] uppercase mt-0.5">
-            Goa 2026 &nbsp;·&nbsp; AI × Crypto
-          </span>
-        </div>
+      {/* ════════════════════════════════════════════════════════════════
+          HERO SECTION
+      ════════════════════════════════════════════════════════════════ */}
+      <section className="relative flex-1 flex flex-col overflow-hidden" style={{ minHeight: "100vh" }}>
 
-        {/* Pill tag */}
-        <div className="hidden sm:flex items-center gap-2 border border-goa-yellow/40 rounded-full px-4 py-1.5">
-          <span className="w-2 h-2 rounded-full bg-goa-yellow animate-pulse-slow" />
-          <span className="text-goa-cream/80 text-xs font-medium tracking-wide">
-            Builder Residency
-          </span>
-        </div>
-      </header>
+        {/* Background Palm SVG left */}
+        <PalmTree className="absolute bottom-0 left-0 w-40 sm:w-56 opacity-25 pointer-events-none select-none z-0" />
 
-      {/* ── Hero Section ─────────────────────────────────────────────────── */}
-      <section className="relative px-5 sm:px-8 pt-8 pb-16 max-w-5xl mx-auto">
+        {/* Background Palm SVG right */}
+        <PalmTree className="absolute bottom-0 right-0 w-40 sm:w-56 opacity-25 pointer-events-none select-none z-0 scale-x-[-1]" />
 
-        {/* Background decorative elements */}
-        <div
-          className="absolute top-0 right-0 w-48 h-48 opacity-10 pointer-events-none"
-          aria-hidden="true"
+        {/* Background Animated Sun */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.6, rotate: -20 }}
+          animate={{ opacity: 0.75, scale: 1, rotate: 0 }}
+          transition={{ duration: 1.2, ease: easeOutCubic }}
+          className="absolute top-10 right-8 sm:right-20 w-16 sm:w-20 pointer-events-none select-none z-0"
         >
-          <PalmTreeLeft />
-        </div>
-        <div
-          className="absolute top-10 left-0 w-32 h-32 opacity-8 pointer-events-none -scale-x-100"
-          aria-hidden="true"
-        >
-          <PalmTreeLeft />
-        </div>
-        <div
-          className="absolute top-8 right-16 sm:right-40 w-20 h-20 opacity-25 pointer-events-none"
-          aria-hidden="true"
-        >
-          <SunIllustration />
-        </div>
+          <Sun className="w-full h-full" />
+        </motion.div>
 
         {/* Sparkles */}
-        <StarSparkle className="absolute top-16 left-6 w-4 h-4 text-goa-yellow opacity-50 pointer-events-none" />
-        <StarSparkle className="absolute top-32 right-8 w-3 h-3 text-goa-pink opacity-50 pointer-events-none" />
-        <StarSparkle className="absolute top-48 left-1/4 w-2.5 h-2.5 text-goa-yellow/70 opacity-40 pointer-events-none" />
+        <Sparkle className="absolute top-24 left-[15%] w-3 h-3 text-goa-yellow opacity-60 pointer-events-none z-0" />
+        <Sparkle className="absolute top-40 right-[25%] w-2.5 h-2.5 text-goa-pink opacity-50 pointer-events-none z-0" />
+        <Sparkle className="absolute top-60 left-[40%] w-2 h-2 text-goa-yellow/60 opacity-40 pointer-events-none z-0" />
 
-        {/* Hero heading */}
-        <div className="text-center mb-3">
-          <p className="font-sans text-goa-yellow text-xs sm:text-sm tracking-[0.3em] uppercase font-semibold mb-3">
+        {/* ════════════════════════════════════════════════════════════════
+            GOA HACKATHON PINNED STICKERS & BADGES (Framer Motion Animated)
+        ════════════════════════════════════════════════════════════════ */}
+
+        {/* 1. Official Stamp Sticker Badge (Top Left near Header) */}
+        <motion.div
+          initial={{ opacity: 0, y: -40, rotate: -20, scale: 0.7 }}
+          whileInView={{ opacity: 1, y: 0, rotate: -8, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.85, ease: easeBounce, delay: 0.2 }}
+          whileHover={{ scale: 1.1, rotate: -2, transition: { duration: 0.2 } }}
+          className="absolute top-20 left-4 sm:left-10 z-20 pointer-events-auto cursor-pointer hidden md:block"
+        >
+          <motion.div
+            animate={{ y: [0, -6, 0], rotate: [-8, -5, -8] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="relative bg-goa-cream p-2.5 rounded-2xl border-2 border-goa-yellow shadow-[5px_6px_0px_rgba(0,0,0,0.35)]"
+          >
+            {/* Pinned Dot */}
+            <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-goa-pink border-2 border-white shadow-md z-10" />
+            
+            <div className="w-24 sm:w-28 h-auto overflow-hidden rounded-xl bg-white p-1">
+              <Image
+                src="/assets/sticker-stamp.png"
+                alt="Hacker House Goa Official Stamp"
+                width={120}
+                height={120}
+                className="object-contain w-full h-full"
+              />
+            </div>
+            <p className="font-sans text-[9px] font-bold text-center text-goa-dark-green tracking-wider uppercase mt-1">
+              Residency 2026
+            </p>
+          </motion.div>
+        </motion.div>
+
+        {/* 2. Beach Signpost Sticker ("BUILD / GOA / RESIDENCY") - Mid Left */}
+        <motion.div
+          initial={{ opacity: 0, x: -60, rotate: -12 }}
+          whileInView={{ opacity: 1, x: 0, rotate: 4 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: easeOutCubic, delay: 0.35 }}
+          whileHover={{ scale: 1.08, rotate: 0, transition: { duration: 0.2 } }}
+          className="absolute top-64 left-2 sm:left-8 z-20 pointer-events-auto cursor-pointer hidden lg:block"
+        >
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="relative bg-goa-cream p-2.5 rounded-2xl border-2 border-goa-yellow shadow-[6px_8px_0px_rgba(0,0,0,0.4)]"
+          >
+            {/* Pinned Dot */}
+            <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-goa-yellow border-2 border-white shadow-md z-10" />
+
+            <div className="w-28 sm:w-32 h-auto overflow-hidden rounded-xl bg-white p-1">
+              <Image
+                src="/assets/sticker-signpost.png"
+                alt="Build Goa Residency Signpost"
+                width={140}
+                height={140}
+                className="object-contain w-full h-full"
+              />
+            </div>
+            <p className="font-sans text-[9px] font-extrabold text-center text-goa-dark-green tracking-widest uppercase mt-1">
+              Goa Beach HQ
+            </p>
+          </motion.div>
+        </motion.div>
+
+        {/* 3. Coconut Drink Sticker - Top Right near Headline */}
+        <motion.div
+          initial={{ opacity: 0, y: -40, scale: 0.8, rotate: 20 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1, rotate: 10 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.85, ease: easeBounce, delay: 0.3 }}
+          whileHover={{ scale: 1.12, rotate: 16, transition: { duration: 0.2 } }}
+          className="absolute top-24 right-4 sm:right-12 z-20 pointer-events-auto cursor-pointer hidden md:block"
+        >
+          <motion.div
+            animate={{ y: [0, -7, 0], rotate: [10, 14, 10] }}
+            transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
+            className="relative bg-goa-cream p-2.5 rounded-2xl border-2 border-goa-yellow shadow-[5px_6px_0px_rgba(0,0,0,0.35)]"
+          >
+            {/* Pinned Dot */}
+            <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-goa-yellow border-2 border-white shadow-md z-10" />
+
+            <div className="w-24 sm:w-28 h-auto overflow-hidden rounded-xl bg-white p-1">
+              <Image
+                src="/assets/sticker-coconut.png"
+                alt="Goa Beach Coconut Drink"
+                width={120}
+                height={120}
+                className="object-contain w-full h-full"
+              />
+            </div>
+            <p className="font-sans text-[9px] font-bold text-center text-goa-dark-green tracking-wider uppercase mt-1">
+              Build & Chill
+            </p>
+          </motion.div>
+        </motion.div>
+
+        {/* 4. Retro Scooter Sticker - Bottom Right near Upload Card */}
+        <motion.div
+          initial={{ opacity: 0, x: 60, rotate: 15 }}
+          whileInView={{ opacity: 1, x: 0, rotate: -6 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: easeOutCubic, delay: 0.4 }}
+          whileHover={{ scale: 1.1, rotate: 0, transition: { duration: 0.2 } }}
+          className="absolute bottom-20 right-3 sm:right-10 z-20 pointer-events-auto cursor-pointer hidden lg:block"
+        >
+          <motion.div
+            animate={{ y: [0, -7, 0] }}
+            transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
+            className="relative bg-goa-cream p-2.5 rounded-2xl border-2 border-goa-yellow shadow-[6px_8px_0px_rgba(0,0,0,0.4)]"
+          >
+            {/* Pinned Dot */}
+            <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-goa-pink border-2 border-white shadow-md z-10" />
+
+            <div className="w-32 sm:w-36 h-auto overflow-hidden rounded-xl bg-white p-1">
+              <Image
+                src="/assets/sticker-scooter.png"
+                alt="Goa Beach Ride Scooter"
+                width={150}
+                height={150}
+                className="object-contain w-full h-full"
+              />
+            </div>
+            <p className="font-sans text-[9px] font-extrabold text-center text-goa-dark-green tracking-widest uppercase mt-1">
+              Goa Ride
+            </p>
+          </motion.div>
+        </motion.div>
+
+        {/* ── NAV HEADER ────────────────────────────────────────────── */}
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: easeOutCubic }}
+          className="relative z-10 flex items-center justify-between px-6 sm:px-10 py-5 max-w-5xl mx-auto w-full"
+        >
+          <div>
+            <p
+              className="font-serif text-goa-yellow leading-none"
+              style={{ fontSize: "clamp(1.3rem, 3vw, 2rem)", fontWeight: 800 }}
+            >
+              HACKER HOUSE
+            </p>
+            <p className="font-sans text-goa-cream/55 text-[10px] tracking-[0.25em] uppercase mt-0.5">
+              Goa 2026 &nbsp;·&nbsp; AI × Crypto
+            </p>
+          </div>
+
+          <div className="hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full border border-goa-yellow/30 bg-black/15 backdrop-blur-sm">
+            <span className="w-2 h-2 rounded-full bg-goa-yellow animate-pulse" />
+            <span className="text-goa-cream/70 text-xs tracking-wide font-medium">Builder Residency</span>
+          </div>
+        </motion.header>
+
+        {/* ── MAIN HERO CONTENT ─────────────────────────────────────── */}
+        <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center px-5 sm:px-8 pb-16 max-w-3xl mx-auto w-full">
+
+          {/* Eyebrow badge */}
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: easeOutCubic, delay: 0.1 }}
+            className="font-sans text-goa-yellow text-[10px] sm:text-xs tracking-[0.35em] uppercase font-semibold mb-4"
+          >
             ✦ &nbsp;Frame In Goa&nbsp; ✦
-          </p>
-          <h1
-            className="font-serif text-goa-cream leading-[0.92] text-balance"
-            style={{ fontSize: "clamp(3rem, 10vw, 6.5rem)", fontWeight: 700 }}
+          </motion.p>
+
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 25, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.8, ease: easeOutCubic, delay: 0.2 }}
+            className="font-serif text-goa-cream leading-[0.88] text-balance mb-5"
+            style={{ fontSize: "clamp(2.8rem, 9vw, 6rem)", fontWeight: 800 }}
           >
             Your Builder
             <br />
-            <span className="text-goa-yellow italic">ID Card</span>
+            <em className="text-goa-yellow italic">ID Card</em>
             <br />
             Awaits.
-          </h1>
-        </div>
+          </motion.h1>
 
-        {/* Sub-copy */}
-        <p className="font-sans text-goa-cream/65 text-center max-w-sm mx-auto text-sm sm:text-base leading-relaxed mt-5 mb-12">
-          Upload your photo → get your Hacker House badge →&nbsp;
-          <span className="text-goa-cream/90 font-medium">share to X</span> with{" "}
-          <span className="text-goa-yellow font-semibold">#FrameInGoa</span>
-        </p>
+          {/* Sub-copy */}
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: easeOutCubic, delay: 0.3 }}
+            className="font-sans text-goa-cream/55 text-sm sm:text-[15px] leading-relaxed max-w-xs sm:max-w-sm mb-10"
+          >
+            Upload your photo → get your Hacker House badge →{" "}
+            <strong className="text-goa-cream/80 font-medium">share to X</strong> with{" "}
+            <strong className="text-goa-yellow font-semibold">#FrameInGoa</strong>
+          </motion.p>
 
-        {/* ── Upload Zone ──────────────────────────────────────────────── */}
-        <div className="relative z-10">
-          {/* Step indicator */}
-          <div className="flex items-center gap-3 mb-5 max-w-md mx-auto">
-            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-goa-yellow text-goa-dark-green font-bold text-sm shrink-0">
-              1
+          {/* ── Step Progress Indicator ───────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: easeOutCubic, delay: 0.4 }}
+            className="flex items-center gap-2 w-full max-w-sm mb-5"
+          >
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="w-7 h-7 rounded-full bg-goa-yellow text-goa-dark-green text-sm font-bold flex items-center justify-center shadow-lg shadow-goa-yellow/20">1</span>
+              <span className="text-goa-cream/75 text-xs font-medium">Upload photo</span>
             </div>
-            <span className="text-goa-cream/80 text-sm font-medium">
-              Upload your photo
-            </span>
-            <div className="flex-1 h-px bg-goa-cream/20" />
-            <div className="flex items-center justify-center w-7 h-7 rounded-full border border-goa-cream/25 text-goa-cream/35 font-bold text-sm shrink-0">
-              2
+            <div className="flex-1 h-px bg-goa-cream/15" />
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="w-7 h-7 rounded-full border border-goa-cream/20 text-goa-cream/30 text-sm font-bold flex items-center justify-center">2</span>
+              <span className="hidden sm:block text-goa-cream/30 text-xs font-medium">Add details</span>
             </div>
-            <div className="flex items-center justify-center w-7 h-7 rounded-full border border-goa-cream/25 text-goa-cream/35 font-bold text-sm shrink-0">
-              3
+            <div className="flex-1 h-px bg-goa-cream/15" />
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="w-7 h-7 rounded-full border border-goa-cream/20 text-goa-cream/30 text-sm font-bold flex items-center justify-center">3</span>
+              <span className="hidden sm:block text-goa-cream/30 text-xs font-medium">Get card</span>
             </div>
-          </div>
+          </motion.div>
 
-          <PhotoUploadZone onFileSelected={handleFileSelected} />
+          {/* ── Upload Zone with Entrance Scale ────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.8, ease: easeOutCubic, delay: 0.5 }}
+            className="w-full max-w-md"
+          >
+            <PhotoUploadZone onFileSelected={handleFileSelected} />
+          </motion.div>
         </div>
       </section>
 
-      {/* ── Beach divider illustration ────────────────────────────────────── */}
-      <div aria-hidden="true" className="relative w-full overflow-hidden" style={{ height: 64 }}>
-        <svg
-          viewBox="0 0 1440 64"
-          preserveAspectRatio="none"
-          className="w-full h-full"
-          fill="none"
-        >
-          {/* Waves */}
-          <path
-            d="M0 32 Q180 8 360 32 Q540 56 720 32 Q900 8 1080 32 Q1260 56 1440 32 L1440 64 L0 64 Z"
-            fill="#05552F"
-          />
-          <path
-            d="M0 40 Q180 20 360 40 Q540 60 720 40 Q900 20 1080 40 Q1260 60 1440 40 L1440 64 L0 64 Z"
-            fill="#086B3C"
-            opacity="0.6"
-          />
-        </svg>
-      </div>
+      {/* ════════════════════════════════════════════════════════════════
+          TROPICAL FLOWERS SECTION DIVIDER (with Scroll Parallax/Ease)
+      ════════════════════════════════════════════════════════════════ */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 0.9, y: 0 }}
+        viewport={{ once: true, margin: "-20px" }}
+        transition={{ duration: 0.9, ease: easeOutCubic }}
+        className="relative w-full shrink-0 overflow-hidden"
+        style={{ height: 110 }}
+        aria-hidden="true"
+      >
+        <Image
+          src="/assets/leaves-border.png"
+          alt=""
+          fill
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-goa-dark-green via-transparent to-goa-dark-green/80 pointer-events-none" />
+      </motion.div>
 
-      {/* ── Footer strip ─────────────────────────────────────────────────── */}
-      <footer className="bg-goa-green px-5 sm:px-8 py-6 text-center">
-        <p className="font-sans text-goa-cream/40 text-xs tracking-widest uppercase">
-          Hacker House Goa 2026 &nbsp;·&nbsp; by{" "}
-          <span className="text-goa-cream/60">2:47PM Studio</span>
+      {/* ════════════════════════════════════════════════════════════════
+          FOOTER WITH SCROLL REVEAL
+      ════════════════════════════════════════════════════════════════ */}
+      <motion.footer
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, ease: easeOutCubic }}
+        className="shrink-0 bg-goa-dark-green py-8 text-center px-5"
+      >
+        <p className="font-serif text-goa-yellow text-base sm:text-lg font-bold tracking-widest uppercase">
+          Hacker House Goa 2026
         </p>
-        <p className="font-sans text-goa-cream/25 text-xs mt-1">
-          No login required. Your photo never leaves your device.
+        <p className="font-sans text-goa-cream/40 text-xs tracking-widest uppercase mt-1">
+          by 2:47PM Studio
         </p>
-      </footer>
+        <p className="font-sans text-goa-cream/20 text-[10px] mt-3">
+          No login required &nbsp;·&nbsp; Your photo never leaves your device
+        </p>
+      </motion.footer>
 
     </main>
   );

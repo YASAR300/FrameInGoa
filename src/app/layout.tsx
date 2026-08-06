@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Playfair_Display, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
+// Closest free Google Font match to PP Editorial New
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-cormorant",
-  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-playfair",
+  weight: ["400", "500", "600", "700", "800", "900"],
   style: ["normal", "italic"],
   display: "swap",
 });
@@ -50,7 +51,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn(cormorant.variable, inter.variable)}>
+    <html lang="en" className={cn(playfair.variable, inter.variable)}>
       <body className={cn("antialiased", "font-sans")}>
         {children}
       </body>
