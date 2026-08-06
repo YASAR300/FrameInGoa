@@ -59,6 +59,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn(playfair.variable, inter.variable)}>
+      <head>
+        <link rel="icon" href="/assets/frameingoa-logo.png?v=2" type="image/png" sizes="any" />
+        <link rel="shortcut icon" href="/assets/frameingoa-logo.png?v=2" type="image/png" />
+        <link rel="apple-touch-icon" href="/assets/frameingoa-logo.png?v=2" />
+      </head>
       <body className={cn("antialiased", "font-sans")}>
         {children}
       </body>
