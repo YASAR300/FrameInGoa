@@ -212,16 +212,32 @@ export default function Home() {
           transition={{ duration: 0.6, ease: easeOutCubic }}
           className="relative z-10 flex items-center justify-between px-6 sm:px-10 py-5 max-w-5xl mx-auto w-full"
         >
-          <div>
-            <p
-              className="font-serif text-goa-yellow leading-none"
-              style={{ fontSize: "clamp(1.3rem, 3vw, 2rem)", fontWeight: 800 }}
+          <div className="flex items-center gap-3.5">
+            {/* FrameInGoa Logo Image */}
+            <motion.div
+              whileHover={{ rotate: 10, scale: 1.08 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-11 h-11 sm:w-13 sm:h-13 rounded-full overflow-hidden border-2 border-goa-yellow bg-white shadow-lg shrink-0 p-0.5"
             >
-              HACKER HOUSE
-            </p>
-            <p className="font-sans text-goa-cream/55 text-[10px] tracking-[0.25em] uppercase mt-0.5">
-              Goa 2026 &nbsp;·&nbsp; AI × Crypto
-            </p>
+              <Image
+                src="/assets/frameingoa-logo.png"
+                alt="FrameInGoa Logo"
+                fill
+                className="object-contain"
+              />
+            </motion.div>
+
+            <div>
+              <p
+                className="font-serif text-goa-yellow leading-none"
+                style={{ fontSize: "clamp(1.3rem, 3vw, 2rem)", fontWeight: 800 }}
+              >
+                HACKER HOUSE
+              </p>
+              <p className="font-sans text-goa-cream/55 text-[10px] tracking-[0.25em] uppercase mt-0.5">
+                Goa 2026 &nbsp;·&nbsp; AI × Crypto
+              </p>
+            </div>
           </div>
 
           <div className="hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full border border-goa-yellow/30 bg-black/15 backdrop-blur-sm">

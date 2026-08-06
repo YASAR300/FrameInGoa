@@ -33,15 +33,22 @@ export const metadata: Metadata = {
     "2:47PM Studio",
     "FrameInGoa",
   ],
+  icons: {
+    icon: "/assets/frameingoa-logo.png",
+    shortcut: "/assets/frameingoa-logo.png",
+    apple: "/assets/frameingoa-logo.png",
+  },
   openGraph: {
     title: "FrameInGoa — Hacker House Goa 2026",
     description: "Generate your Builder ID Card for Hacker House Goa 2026",
     type: "website",
+    images: ["/assets/frameingoa-logo.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "FrameInGoa — Hacker House Goa 2026",
     description: "Generate your Builder ID Card for Hacker House Goa 2026",
+    images: ["/assets/frameingoa-logo.png"],
   },
 };
 
