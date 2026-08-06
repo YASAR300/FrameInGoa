@@ -38,9 +38,6 @@ export default function Home() {
       ref={containerRef}
       className="min-h-screen bg-goa-dark-green overflow-x-hidden flex flex-col selection:bg-goa-yellow selection:text-goa-dark-green"
     >
-      {/* ── Top Brand Yellow Accent Bar ───────────────────────────────── */}
-      <div className="h-1.5 w-full bg-goa-yellow shrink-0 z-30 relative" />
-
       {/* ════════════════════════════════════════════════════════════════
           MAIN HERO SECTION (With footer-beach.png as Main Background)
       ════════════════════════════════════════════════════════════════ */}
