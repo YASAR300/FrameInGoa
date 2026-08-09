@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Playfair_Display, Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
-// Closest free Google Font match to PP Editorial New
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
@@ -19,7 +18,22 @@ const inter = Inter({
   display: "swap",
 });
 
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://frameingoa.app"),
   title: "FrameInGoa — Hacker House Goa 2026 Builder ID Card",
   description:
     "Generate your Builder ID Card for Hacker House Goa 2026 — the AI × Crypto builder residency by 2:47PM Studio. Upload your photo, get your card, share on X.",
@@ -58,7 +72,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn(playfair.variable, inter.variable)}>
+    <html lang="en" className={cn(playfair.variable, inter.variable, spaceGrotesk.variable, jetbrainsMono.variable)}>
       <head>
         <link rel="icon" href="/assets/frameingoa-logo.png?v=2" type="image/png" sizes="any" />
         <link rel="shortcut icon" href="/assets/frameingoa-logo.png?v=2" type="image/png" />

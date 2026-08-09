@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import PhotoUploadZone from "@/components/PhotoUploadZone";
+import GoaBuilder from "@/components/goa-builder/GoaBuilder";
 
 /* ─── Sparkle SVG ───────────────────────────────────────────────────────── */
 function Sparkle({ className }: { className?: string }) {
@@ -14,7 +14,6 @@ function Sparkle({ className }: { className?: string }) {
   );
 }
 
-// Animation easings typed as [number, number, number, number] tuple for Framer Motion
 const easeOutCubic: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
 const easeBounce: [number, number, number, number] = [0.34, 1.35, 0.64, 1.0];
 
@@ -28,22 +27,17 @@ export default function Home() {
   const mainBgY = useTransform(scrollYProgress, [0, 0.5], ["0%", "10%"]);
   const sunRotate = useTransform(scrollYProgress, [0, 0.5], [0, 90]);
 
-  function handleFileSelected(file: File, dataUrl: string) {
-    console.log("File selected:", file.name);
-    void dataUrl;
-  }
-
   return (
     <main
       ref={containerRef}
       className="min-h-screen bg-goa-dark-green overflow-x-hidden flex flex-col selection:bg-goa-yellow selection:text-goa-dark-green"
     >
       {/* ════════════════════════════════════════════════════════════════
-          MAIN HERO SECTION (With footer-beach.png as Main Background)
+          MAIN HERO SECTION
       ════════════════════════════════════════════════════════════════ */}
       <section className="relative flex-1 flex flex-col overflow-hidden pb-12" style={{ minHeight: "92vh" }}>
 
-        {/* MAIN BACKGROUND IMAGE: footer-beach.png */}
+        {/* MAIN BACKGROUND IMAGE */}
         <motion.div
           style={{ y: mainBgY }}
           className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden"
@@ -55,11 +49,10 @@ export default function Home() {
             priority
             className="object-cover object-center opacity-30 mix-blend-screen"
           />
-          {/* Soft dark green overlay gradients for readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-goa-dark-green/60 via-transparent to-goa-dark-green/90" />
         </motion.div>
 
-        {/* Animated Sun Asset */}
+        {/* Animated Sun */}
         <motion.div
           style={{ rotate: sunRotate }}
           initial={{ opacity: 0, scale: 0.5 }}
@@ -81,11 +74,9 @@ export default function Home() {
         <Sparkle className="absolute top-44 right-[28%] w-3 h-3 text-goa-pink opacity-60 pointer-events-none z-10 animate-pulse" />
         <Sparkle className="absolute top-64 left-[38%] w-2.5 h-2.5 text-goa-yellow/70 opacity-50 pointer-events-none z-10" />
 
-        {/* ════════════════════════════════════════════════════════════════
-            DISTRIBUTED STICKER BADGES (Lowered down for clean spacing)
-        ════════════════════════════════════════════════════════════════ */}
+        {/* ── STICKER BADGES ───────────────────────────────────────────── */}
 
-        {/* 1. Official Stamp Sticker Badge ("Residency 2026") - Mid-Left */}
+        {/* 1. Official Stamp Sticker — Mid-Left */}
         <motion.div
           initial={{ opacity: 0, y: -20, rotate: -20, scale: 0.7 }}
           whileInView={{ opacity: 1, y: 0, rotate: -8, scale: 1 }}
@@ -115,7 +106,7 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
-        {/* 2. Coconut Drink Sticker Badge ("Build & Chill") - Mid-Right */}
+        {/* 2. Coconut Drink Sticker — Mid-Right */}
         <motion.div
           initial={{ opacity: 0, y: -20, scale: 0.8, rotate: 20 }}
           whileInView={{ opacity: 1, y: 0, scale: 1, rotate: 10 }}
@@ -140,12 +131,12 @@ export default function Home() {
               />
             </div>
             <p className="font-sans text-[9px] font-bold text-center text-goa-dark-green tracking-wider uppercase mt-1">
-              Build & Chill
+              Build &amp; Chill
             </p>
           </motion.div>
         </motion.div>
 
-        {/* 3. Beach Signpost Sticker Badge ("Goa Beach HQ") - Lower Left near Upload Card */}
+        {/* 3. Beach Signpost Sticker — Lower Left */}
         <motion.div
           initial={{ opacity: 0, x: -60, rotate: -12 }}
           whileInView={{ opacity: 1, x: 0, rotate: 4 }}
@@ -175,7 +166,7 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
-        {/* 4. Retro Scooter Sticker Badge ("Goa Ride") - Lower Right near Upload Card */}
+        {/* 4. Retro Scooter Sticker — Lower Right */}
         <motion.div
           initial={{ opacity: 0, x: 60, rotate: 15 }}
           whileInView={{ opacity: 1, x: 0, rotate: -6 }}
@@ -213,7 +204,7 @@ export default function Home() {
           className="relative z-10 flex items-center justify-between px-6 sm:px-10 py-5 max-w-5xl mx-auto w-full"
         >
           <div className="flex items-center gap-3.5">
-            {/* FrameInGoa Logo Image */}
+            {/* FrameInGoa Logo */}
             <motion.div
               whileHover={{ rotate: 10, scale: 1.08 }}
               transition={{ duration: 0.2 }}
@@ -247,7 +238,7 @@ export default function Home() {
         </motion.header>
 
         {/* ── MAIN HERO CONTENT ─────────────────────────────────────── */}
-        <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center px-5 sm:px-8 pb-14 max-w-3xl mx-auto w-full">
+        <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center px-4 sm:px-6 pb-14 max-w-7xl mx-auto w-full">
 
           {/* Eyebrow badge */}
           <motion.p
@@ -265,13 +256,13 @@ export default function Home() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, ease: easeOutCubic, delay: 0.2 }}
             className="font-serif text-goa-cream leading-[0.88] text-balance mb-5"
-            style={{ fontSize: "clamp(2.8rem, 9vw, 6rem)", fontWeight: 800 }}
+            style={{ fontSize: "clamp(2.8rem, 7vw, 5.5rem)", fontWeight: 800 }}
           >
             Your Builder
             <br />
             <em className="text-goa-yellow italic">ID Card</em>
             <br />
-            Awaits.
+            is one upload away
           </motion.h1>
 
           {/* Sub-copy */}
@@ -279,58 +270,34 @@ export default function Home() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: easeOutCubic, delay: 0.3 }}
-            className="font-sans text-goa-cream/55 text-sm sm:text-[15px] leading-relaxed max-w-xs sm:max-w-sm mb-9"
+            className="font-sans text-goa-cream/55 text-sm sm:text-[15px] leading-relaxed max-w-sm mb-8"
           >
-            Upload your photo → get your Hacker House badge →{" "}
-            <strong className="text-goa-cream/80 font-medium">share to X</strong> with{" "}
+            Photo → Edit → Fill → Download →{" "}
             <strong className="text-goa-yellow font-semibold">#FrameInGoa</strong>
           </motion.p>
 
-          {/* ── Step Progress Indicator ───────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: easeOutCubic, delay: 0.4 }}
-            className="flex items-center gap-2 w-full max-w-sm mb-5"
-          >
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="w-7 h-7 rounded-full bg-goa-yellow text-goa-dark-green text-sm font-bold flex items-center justify-center shadow-lg shadow-goa-yellow/20">1</span>
-              <span className="text-goa-cream/75 text-xs font-medium">Upload photo</span>
-            </div>
-            <div className="flex-1 h-px bg-goa-cream/15" />
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="w-7 h-7 rounded-full border border-goa-cream/20 text-goa-cream/30 text-sm font-bold flex items-center justify-center">2</span>
-              <span className="hidden sm:block text-goa-cream/30 text-xs font-medium">Add details</span>
-            </div>
-            <div className="flex-1 h-px bg-goa-cream/15" />
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="w-7 h-7 rounded-full border border-goa-cream/20 text-goa-cream/30 text-sm font-bold flex items-center justify-center">3</span>
-              <span className="hidden sm:block text-goa-cream/30 text-xs font-medium">Get card</span>
-            </div>
-          </motion.div>
-
-          {/* ── Upload Zone ───────────────────────────────────────── */}
+          {/* Unified Builder Experience */}
           <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.8, ease: easeOutCubic, delay: 0.5 }}
-            className="w-full max-w-md"
+            transition={{ duration: 0.8, ease: easeOutCubic, delay: 0.4 }}
+            className="w-full"
           >
-            <PhotoUploadZone onFileSelected={handleFileSelected} />
+            <GoaBuilder />
           </motion.div>
         </div>
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          FOOTER SECTION (With leaves-border.png in Footer)
+          FOOTER SECTION
       ════════════════════════════════════════════════════════════════ */}
       <footer className="relative shrink-0 overflow-hidden py-14 mt-auto border-t border-goa-yellow/30">
 
-        {/* FOOTER BACKGROUND IMAGE: leaves-border.png */}
+        {/* FOOTER BACKGROUND: leaves-border.png */}
         <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
           <Image
             src="/assets/leaves-border.png"
-            alt="Tropical Flowers & Leaves Border"
+            alt="Tropical Flowers &amp; Leaves Border"
             fill
             className="object-cover object-center opacity-80"
           />
@@ -350,15 +317,18 @@ export default function Home() {
             </p>
             <p className="font-sans text-goa-cream text-xs tracking-widest uppercase font-bold mt-1">
               AI × Crypto Builder Residency &nbsp;·&nbsp; by{" "}
-              <span className="text-goa-yellow underline">2:47PM Studio</span>
+              <a href="https://hhgoa.com" target="_blank" rel="noopener noreferrer" className="text-goa-yellow underline hover:text-white">
+                2:47PM Studio
+              </a>
             </p>
             <p className="font-sans text-goa-cream/80 text-[11px] mt-3">
-              No login required &nbsp;·&nbsp; Your photo never leaves your device &nbsp;·&nbsp; #FrameInGoa
+              No login required &nbsp;·&nbsp; Your photo never leaves your device &nbsp;·&nbsp;{" "}
+              <a href="/privacy" className="underline hover:text-goa-yellow">Privacy Policy</a>
+              &nbsp;·&nbsp; #FrameInGoa
             </p>
           </div>
         </motion.div>
       </footer>
-
     </main>
   );
 }

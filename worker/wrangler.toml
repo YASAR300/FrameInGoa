@@ -1,0 +1,6 @@
+name = "frame-in-goa"
+main = "index.js"
+compatibility_date = "2024-08-01"
+
+[ai]
+binding = "AI"
