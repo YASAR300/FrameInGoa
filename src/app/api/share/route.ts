@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { uploadToCloudinary } from "@/lib/cloudinary";
+import { uploadToCloudinary, getCloudinaryImageUrl } from "@/lib/cloudinary";
 
 interface CachedImage {
   cloudinaryUrl?: string;
@@ -86,12 +86,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "File exceeds 10 MB size limit" }, { status: 400 });
     }
 
-    // ── UPLOAD DIRECTLY TO CLOUDINARY
-    const cloudinaryRes = await uploadToCloudinary(base64DataUrl);
-    const cloudinaryUrl = cloudinaryRes?.secure_url;
-
     // Generate clean 8-character unique share ID or use custom pre-generated share ID
     const id = customId || Math.random().toString(36).substring(2, 10);
+
+    // ── UPLOAD DIRECTLY TO CLOUDINARY WITH PERMANENT PUBLIC_ID
+    const cloudinaryRes = await uploadToCloudinary(base64DataUrl, id);
+    const cloudinaryUrl = cloudinaryRes?.secure_url || getCloudinaryImageUrl(id);
 
     shareCache.set(id, {
       cloudinaryUrl,
@@ -104,7 +104,7 @@ export async function POST(request: Request) {
       {
         id,
         shareUrl: `/s/${id}`,
-        imageUrl: cloudinaryUrl || `/api/share?id=${id}`,
+        imageUrl: cloudinaryUrl,
         cloudinaryUrl,
       },
       { status: 200 }
@@ -119,21 +119,25 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
 
-  if (!id || !shareCache.has(id)) {
+  if (!id) {
     return new NextResponse("Not Found", { status: 404 });
   }
 
-  const cached = shareCache.get(id)!;
-
-  // If Cloudinary CDN URL exists, redirect directly to Cloudinary
-  if (cached.cloudinaryUrl) {
-    return NextResponse.redirect(cached.cloudinaryUrl, 302);
+  // Check cache first
+  if (shareCache.has(id)) {
+    const cached = shareCache.get(id)!;
+    if (cached.cloudinaryUrl) {
+      return NextResponse.redirect(cached.cloudinaryUrl, 302);
+    }
+    return new NextResponse(new Uint8Array(cached.buffer), {
+      headers: {
+        "Content-Type": cached.mime,
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    });
   }
 
-  return new NextResponse(new Uint8Array(cached.buffer), {
-    headers: {
-      "Content-Type": cached.mime,
-      "Cache-Control": "public, max-age=31536000, immutable",
-    },
-  });
+  // Fallback redirect directly to Cloudinary permanent CDN URL by public_id
+  const permanentCloudinaryUrl = getCloudinaryImageUrl(id);
+  return NextResponse.redirect(permanentCloudinaryUrl, 302);
 }

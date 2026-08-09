@@ -8,18 +8,22 @@ export const CLOUDINARY_CONFIG = {
 
 /**
  * Uploads a base64 image data URL directly to Cloudinary using secure SHA-1 authentication.
- * Saves image permanently to Cloudinary account 'drfxktigz'.
+ * Saves image permanently to Cloudinary account 'drfxktigz' with explicit public_id.
  */
-export async function uploadToCloudinary(base64DataUrl: string): Promise<{
+export async function uploadToCloudinary(
+  base64DataUrl: string,
+  publicId?: string
+): Promise<{
   secure_url: string;
   public_id: string;
 } | null> {
   try {
     const timestamp = Math.floor(Date.now() / 1000);
     const folder = "hh-goa-builders";
+    const targetPublicId = publicId || Math.random().toString(36).substring(2, 10);
 
-    // 1. Try Signed Upload with folder
-    const paramsToSign1 = `folder=${folder}&timestamp=${timestamp}`;
+    // 1. Try Signed Upload with folder and public_id
+    const paramsToSign1 = `folder=${folder}&public_id=${targetPublicId}&timestamp=${timestamp}`;
     const signature1 = crypto
       .createHash("sha1")
       .update(`${paramsToSign1}${CLOUDINARY_CONFIG.apiSecret}`)
@@ -30,6 +34,7 @@ export async function uploadToCloudinary(base64DataUrl: string): Promise<{
     formData1.append("api_key", CLOUDINARY_CONFIG.apiKey);
     formData1.append("timestamp", timestamp.toString());
     formData1.append("folder", folder);
+    formData1.append("public_id", targetPublicId);
     formData1.append("signature", signature1);
 
     const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`;
@@ -52,7 +57,7 @@ export async function uploadToCloudinary(base64DataUrl: string): Promise<{
     console.warn("Cloudinary signed folder upload fallback, reason:", errText);
 
     // 2. Try Standard Signed Upload without folder
-    const paramsToSign2 = `timestamp=${timestamp}`;
+    const paramsToSign2 = `public_id=${targetPublicId}&timestamp=${timestamp}`;
     const signature2 = crypto
       .createHash("sha1")
       .update(`${paramsToSign2}${CLOUDINARY_CONFIG.apiSecret}`)
@@ -62,6 +67,7 @@ export async function uploadToCloudinary(base64DataUrl: string): Promise<{
     formData2.append("file", base64DataUrl);
     formData2.append("api_key", CLOUDINARY_CONFIG.apiKey);
     formData2.append("timestamp", timestamp.toString());
+    formData2.append("public_id", targetPublicId);
     formData2.append("signature", signature2);
 
     res = await fetch(uploadUrl, {
@@ -85,4 +91,11 @@ export async function uploadToCloudinary(base64DataUrl: string): Promise<{
     console.error("Cloudinary upload error:", err);
     return null;
   }
+}
+
+/**
+ * Returns the permanent Cloudinary CDN image URL for any given share ID.
+ */
+export function getCloudinaryImageUrl(id: string): string {
+  return `https://res.cloudinary.com/${CLOUDINARY_CONFIG.cloudName}/image/upload/hh-goa-builders/${id}.jpg`;
 }
