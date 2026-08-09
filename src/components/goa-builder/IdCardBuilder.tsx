@@ -317,6 +317,32 @@ export default function IdCardBuilder() {
     isDraggingRef.current = false;
   };
 
+  const handleCanvasTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      const fakeMouseEvent = {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+      } as unknown as React.MouseEvent<HTMLCanvasElement>;
+      handleCanvasMouseDown(fakeMouseEvent);
+    }
+  };
+
+  const handleCanvasTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      const fakeMouseEvent = {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+      } as unknown as React.MouseEvent<HTMLCanvasElement>;
+      handleCanvasMouseMove(fakeMouseEvent);
+    }
+  };
+
+  const handleCanvasTouchEnd = () => {
+    handleCanvasMouseUp();
+  };
+
   const handleCanvasWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
     if (!photoImg) return;
     e.preventDefault();
@@ -363,62 +389,51 @@ export default function IdCardBuilder() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Open popup window synchronously to bypass browser pop-up blockers
-    const popup = typeof window !== "undefined" ? window.open("about:blank", "_blank") : null;
-    addToast("info", "⏳ Uploading custom card to generate share link...");
+    // 1. Generate client-side unique share ID instantly
+    const shareId = Math.random().toString(36).substring(2, 10);
+    const shareUrl = `https://frame-in-goa.vercel.app/s/${shareId}`;
+    const tweetText = `Just got my Builder ID for Hacker House Goa 2026 🌴⚡\n\n${name} (${stack}) — shipping wild things by the sea!\n\n#FrameInGoa #HHGoa2026\n\n${shareUrl}`;
+    const tweetIntentUrl = `https://x.com/intent/post?text=${encodeURIComponent(tweetText)}`;
 
-    try {
-      const dataUrl = canvas.toDataURL("image/png");
-      let shareUrl = "https://frame-in-goa.vercel.app/";
-
-      try {
-        const res = await fetch("/api/share", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: dataUrl }),
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          if (data.id) {
-            const origin = typeof window !== "undefined" && window.location.origin.includes("localhost")
-              ? "https://frame-in-goa.vercel.app"
-              : (typeof window !== "undefined" ? window.location.origin : "https://frame-in-goa.vercel.app");
-            shareUrl = `${origin}/s/${data.id}`;
-          }
-        }
-      } catch (err) {
-        console.error("API share upload error:", err);
+    // 2. Fast Instant Redirect (<10ms user gesture execution!)
+    if (typeof window !== "undefined") {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.open(tweetIntentUrl, "_blank");
+      } else {
+        window.open(tweetIntentUrl, "_blank", "width=600,height=550");
       }
+    }
 
-      // Copy image blob to Clipboard for Ctrl+V attachment on desktop
+    addToast("success", "🚀 X opened instantly with your builder badge link!");
+
+    // 3. Parallel non-blocking Cloudinary upload
+    try {
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = 1080;
+      tempCanvas.height = 1080;
+      const tempCtx = tempCanvas.getContext("2d");
+      if (tempCtx) {
+        tempCtx.drawImage(canvas, 0, 0, 1080, 1080);
+      }
+      const dataUrl = tempCtx ? tempCanvas.toDataURL("image/jpeg", 0.92) : canvas.toDataURL("image/jpeg", 0.85);
+
+      void fetch("/api/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: shareId, image: dataUrl }),
+      });
+
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
       if (blob && typeof navigator !== "undefined" && navigator.clipboard && typeof ClipboardItem !== "undefined") {
         try {
-          await navigator.clipboard.write([
-            new ClipboardItem({ "image/png": blob }),
-          ]);
+          await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
         } catch {
-          // Ignore restricted clipboard permissions
+          // ignore
         }
       }
-
-      handleDownload();
-
-      const tweetText = `Just got my Builder ID for Hacker House Goa 2026 🌴⚡\n\n${name} (${stack}) — shipping wild things by the sea!\n\n#FrameInGoa #HHGoa2026\n\n${shareUrl}`;
-      const tweetIntentUrl = `https://x.com/intent/post?text=${encodeURIComponent(tweetText)}`;
-
-      if (popup) {
-        popup.location.href = tweetIntentUrl;
-      } else {
-        window.open(tweetIntentUrl, "_blank");
-      }
-
-      addToast("success", "🚀 Card stored! Opened X with dynamic preview card!");
     } catch (err) {
-      if (popup) popup.close();
-      console.error("Error sharing card:", err);
-      addToast("error", "Could not prepare share link. Downloaded PNG locally.");
+      console.error("Background share error:", err);
     }
   };
 
@@ -527,7 +542,7 @@ export default function IdCardBuilder() {
                 maxLength={26}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your name"
-                className="w-full bg-black/30 border border-[#f5c842]/25 rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:border-[#f5c842] focus:outline-none transition-colors font-medium"
+                className="w-full bg-black/30 border border-[#f5c842]/25 rounded-xl pl-10 pr-4 py-3 text-base sm:text-sm text-white focus:border-[#f5c842] focus:outline-none transition-colors font-medium"
               />
             </div>
           </div>
@@ -546,7 +561,7 @@ export default function IdCardBuilder() {
                 maxLength={36}
                 onChange={(e) => setStack(e.target.value)}
                 placeholder="Enter your skill / stack"
-                className="w-full bg-black/30 border border-[#f5c842]/25 rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:border-[#f5c842] focus:outline-none transition-colors font-medium"
+                className="w-full bg-black/30 border border-[#f5c842]/25 rounded-xl pl-10 pr-4 py-3 text-base sm:text-sm text-white focus:border-[#f5c842] focus:outline-none transition-colors font-medium"
               />
             </div>
           </div>
@@ -576,7 +591,7 @@ export default function IdCardBuilder() {
                 maxLength={32}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter builder title"
-                className="w-full bg-black/30 border border-[#f5c842]/25 rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:border-[#f5c842] focus:outline-none transition-colors font-medium"
+                className="w-full bg-black/30 border border-[#f5c842]/25 rounded-xl pl-10 pr-4 py-3 text-base sm:text-sm text-white focus:border-[#f5c842] focus:outline-none transition-colors font-medium"
               />
             </div>
           </div>
@@ -611,6 +626,9 @@ export default function IdCardBuilder() {
               onMouseMove={handleCanvasMouseMove}
               onMouseUp={handleCanvasMouseUp}
               onMouseLeave={handleCanvasMouseUp}
+              onTouchStart={handleCanvasTouchStart}
+              onTouchMove={handleCanvasTouchMove}
+              onTouchEnd={handleCanvasTouchEnd}
               onWheel={handleCanvasWheel}
               className="w-full h-auto block cursor-pointer select-none touch-none"
             />

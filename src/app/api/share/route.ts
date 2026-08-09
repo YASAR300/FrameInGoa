@@ -37,12 +37,14 @@ export async function POST(request: Request) {
     let buffer: Buffer | null = null;
     let mime = "image/png";
     let base64DataUrl = "";
+    let customId: string | undefined = undefined;
 
     const contentType = request.headers.get("content-type") || "";
 
     if (contentType.includes("application/json")) {
       const body = await request.json();
       const imageStr = body?.image as string | undefined;
+      customId = body?.id as string | undefined;
 
       if (!imageStr) {
         return NextResponse.json({ error: "No image payload provided" }, { status: 400 });
@@ -64,6 +66,7 @@ export async function POST(request: Request) {
     } else {
       const formData = await request.formData();
       const file = formData.get("image") as File | null;
+      customId = (formData.get("id") as string) || undefined;
 
       if (!file) {
         return NextResponse.json({ error: "No image file provided" }, { status: 400 });
@@ -87,8 +90,8 @@ export async function POST(request: Request) {
     const cloudinaryRes = await uploadToCloudinary(base64DataUrl);
     const cloudinaryUrl = cloudinaryRes?.secure_url;
 
-    // Generate clean 8-character unique share ID
-    const id = Math.random().toString(36).substring(2, 10);
+    // Generate clean 8-character unique share ID or use custom pre-generated share ID
+    const id = customId || Math.random().toString(36).substring(2, 10);
 
     shareCache.set(id, {
       cloudinaryUrl,
