@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Metadata } from "next";
 import { Sparkles, Calendar, MapPin, ExternalLink } from "lucide-react";
 import { getCloudinaryImageUrl } from "@/lib/cloudinary";
 
@@ -7,33 +8,55 @@ interface SharePageProps {
   params: { id: string };
 }
 
-export async function generateMetadata({ params }: SharePageProps) {
+export async function generateMetadata({ params }: SharePageProps): Promise<Metadata> {
   const imageUrl = getCloudinaryImageUrl(params.id);
   const sharePageUrl = `https://frame-in-goa.vercel.app/s/${params.id}`;
+  const title = "Hacker House Goa 2026 — Official Builder Badge #FrameInGoa";
+  const description = "Locked in for Hacker House Goa 2026! Check out my official builder badge.";
 
   return {
-    title: "Hacker House Goa 2026 — Official Builder Badge #FrameInGoa",
-    description: "Locked in for Hacker House Goa 2026! Check out my official builder badge.",
+    metadataBase: new URL("https://frame-in-goa.vercel.app"),
+    title,
+    description,
+    alternates: {
+      canonical: `/s/${params.id}`,
+    },
     openGraph: {
-      title: "Hacker House Goa 2026 — Official Builder Badge #FrameInGoa",
-      description: "Locked in for Hacker House Goa 2026! Check out my official builder badge.",
+      title,
+      description,
       url: sharePageUrl,
       siteName: "FrameInGoa",
       images: [
         {
           url: imageUrl,
+          secureUrl: imageUrl,
           width: 1080,
           height: 1080,
+          type: "image/jpeg",
           alt: "Hacker House Goa 2026 Builder Badge",
         },
       ],
       type: "website",
+      locale: "en_US",
     },
     twitter: {
       card: "summary_large_image",
-      title: "Hacker House Goa 2026 — Official Builder Badge #FrameInGoa",
-      description: "Locked in for Hacker House Goa 2026! Check out my official builder badge.",
-      images: [imageUrl],
+      title,
+      description,
+      site: "@HackerHouseGoa",
+      creator: "@HackerHouseGoa",
+      images: [
+        {
+          url: imageUrl,
+          alt: "Hacker House Goa 2026 Builder Badge",
+        },
+      ],
+    },
+    other: {
+      "image": imageUrl,
+      "og:image:width": "1080",
+      "og:image:height": "1080",
+      "twitter:image:src": imageUrl,
     },
   };
 }

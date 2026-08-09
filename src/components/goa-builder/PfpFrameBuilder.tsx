@@ -351,25 +351,13 @@ export default function PfpFrameBuilder() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    addToast("info", "⏳ Uploading PFP preview to Cloudinary...");
+
     // 1. Generate client-side unique share ID instantly
     const shareId = Math.random().toString(36).substring(2, 10);
     const shareUrl = `https://frame-in-goa.vercel.app/s/${shareId}`;
-    const tweetText = `Check out my PFP Frame for Hacker House Goa 2026 🌴⚡\n\n${name} (${handle}) — shipping in Goa!\n\n#FrameInGoa #HHGoa2026\n\n${shareUrl}`;
-    const tweetIntentUrl = `https://x.com/intent/post?text=${encodeURIComponent(tweetText)}`;
 
-    // 2. Fast Instant Redirect (<10ms user gesture execution!)
-    if (typeof window !== "undefined") {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        window.open(tweetIntentUrl, "_blank");
-      } else {
-        window.open(tweetIntentUrl, "_blank", "width=600,height=550");
-      }
-    }
-
-    addToast("success", "🚀 X opened instantly with your PFP link!");
-
-    // 3. Parallel non-blocking Cloudinary upload
+    // 2. Prepare compressed image & upload to Cloudinary
     try {
       const tempCanvas = document.createElement("canvas");
       tempCanvas.width = 1080;
@@ -380,12 +368,16 @@ export default function PfpFrameBuilder() {
       }
       const dataUrl = tempCtx ? tempCanvas.toDataURL("image/jpeg", 0.92) : canvas.toDataURL("image/jpeg", 0.85);
 
-      void fetch("/api/share", {
+      // Fast upload race (max 800ms) to ensure Cloudinary CDN has the image ready
+      const uploadPromise = fetch("/api/share", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: shareId, image: dataUrl }),
-      });
+      }).catch((err) => console.error(err));
 
+      await Promise.race([uploadPromise, new Promise((r) => setTimeout(r, 800))]);
+
+      // Copy image blob to Clipboard for instant Ctrl+V attachment as well
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
       if (blob && typeof navigator !== "undefined" && navigator.clipboard && typeof ClipboardItem !== "undefined") {
         try {
@@ -397,6 +389,22 @@ export default function PfpFrameBuilder() {
     } catch (err) {
       console.error("Background PFP share error:", err);
     }
+
+    // 3. Open X Intent with live share link
+    const userHandle = handle.trim().startsWith("@") ? handle.trim() : `@${handle.trim()}`;
+    const tweetText = `🌴 Custom PFP Frame locked in for Hacker House Goa 2026!\n\n👤 ${name}\n🏷️ ${userHandle}\n\nReady to ship & vibe with builders by the sea in Goa 🌊⚡\n\nCreate your own PFP Frame:\n${shareUrl}\n\n#FrameInGoa #HHGoa2026`;
+    const tweetIntentUrl = `https://x.com/intent/post?text=${encodeURIComponent(tweetText)}`;
+
+    if (typeof window !== "undefined") {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.open(tweetIntentUrl, "_blank");
+      } else {
+        window.open(tweetIntentUrl, "_blank", "width=600,height=550");
+      }
+    }
+
+    addToast("success", "🚀 Opened X with live image preview card!");
   };
 
   return (
